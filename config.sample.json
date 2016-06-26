@@ -1,3 +1,10 @@
 {
-  "token": "YOUR BOT TOKEN"
+  "telegram": {
+    "token": "YOUR BOT TOKEN"
+  },
+  "bing": {
+    "keys": [
+      "ONE OR MORE BING SEARCH API KEY(S)"
+    ]
+  }
 }
