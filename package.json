@@ -1,0 +1,25 @@
+{
+  "name": "telegram-image-bot",
+  "version": "1.0.0",
+  "description": "A bot for telegram who serves you with images from the web",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CaffeineProcessorsUnited/telegram-image-bot.git"
+  },
+  "keywords": [
+    "telegram",
+    "bot",
+    "image",
+    "search"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CaffeineProcessorsUnited/telegram-image-bot/issues"
+  },
+  "homepage": "https://github.com/CaffeineProcessorsUnited/telegram-image-bot#readme"
+}
