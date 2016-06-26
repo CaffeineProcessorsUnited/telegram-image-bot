@@ -5,18 +5,7 @@ var request = require('request');
 
 var Bing = function(keys, config) {
     var _keys, _config;
-
-    var _errorCodes = {
-      "no_error": 0,
-      "": 1,
-      "": 2,
-      "": 3,
-      "": 4,
-      "": 5,
-      "": 6
-    };
-
-    var _errorMessages = {};
+    
     var _errors = [];
 
     var addError = function(name, message) {
