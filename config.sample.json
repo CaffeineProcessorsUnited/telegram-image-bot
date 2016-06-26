@@ -5,6 +5,13 @@
   "bing": {
     "keys": [
       "ONE OR MORE BING SEARCH API KEY(S)"
-    ]
+    ],
+    "config": {
+      "count": 100,
+      "market": "de-de"
+    }
+  },
+  "bot": {
+    "nsfw": true
   }
 }

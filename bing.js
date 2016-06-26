@@ -5,7 +5,7 @@ var request = require('request');
 
 var Bing = function(keys, config) {
     var _keys, _config;
-    
+
     var _errors = [];
 
     var addError = function(name, message) {
@@ -59,7 +59,7 @@ var Bing = function(keys, config) {
       // extend object1 with object2
       var e = clone(o1);
       for (var k in o2) {
-          if (o2.hasOwnProperty(k)) {
+          if (o2.hasOwnProperty(k) && o2[k] !== undefined) {
              e[k] = o2[k];
           }
        }
@@ -232,7 +232,7 @@ var Bing = function(keys, config) {
       }
       var defaults = {
         "count": 1000,
-        "market": 'de-de'
+        "market": 'en-en'
       }
       _config = extend(defaults, config || {});
 

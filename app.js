@@ -1,16 +1,16 @@
 "use strict";
+
 var config = require('./config.js')();
 if (!config.exists("telegram", "token")) {
   console.error("You need to specify a token for the Telegram API");
   process.exit(1);
 }
-
 var request = require('request');
 
 var TelegramBot = require('node-telegram-bot-api');
-
 // Setup polling way
 var bot = new TelegramBot(config.get("telegram", "token"), { polling: true });
+var bing = require('./bing.js')(config.get("bing", "keys"), config.get("bing", "config"));
 
 function sendImage(query, msg, nsfw) {
   var msgId = msg.message_id;
@@ -52,9 +52,9 @@ bot.onText(/\/image (.+)/, function (msg, match) {
   onCommand("image", match[1], msg);
 });
 
-// Matches /nsfw [whatever]
-bot.onText(/\/nsfw (.+)/, function (msg, match) {
-  onCommand("nsfw", match[1], msg);
-});
-
-var bing = require('./bing.js')(config.get("bing", "keys"));
+if (config.get("bot", "nsfw")) {
+  // Matches /nsfw [whatever]
+  bot.onText(/\/nsfw (.+)/, function (msg, match) {
+    onCommand("nsfw", match[1], msg);
+  });
+}
