@@ -1,21 +1,21 @@
 var simpleGit = require('simple-git')('./');
 var config = require('./config.js')();
 
-var http = require('http');
-var createHandler = require('github-webhook-handler');
-var handler = createHandler({
-	path: config.get("updater", "path") || "/",
-	secret: config.get("updater", "secret")
-});
-
 if (!config.exists("updater", "port")) {
 	console.error("You need to specify a port for the updater to liston on for webhooks!");
 	process.exit(1);
 }
 
-if (!config.exists("updater", "port")) {
+if (!config.exists("updater", "secret")) {
 	console.warn("You didn't specifiy a secret! Not using a secret makes this updater runable by whoever can reach it.");
 }
+
+var http = require('http');
+var createHandler = require('github-webhook-handler');
+var handler = createHandler({
+  path: config.get("updater", "path") || "/",
+  secret: config.get("updater", "secret")
+});
 
 http.createServer(function (req, res) {
 	handler(req, res, function (err) {
