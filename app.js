@@ -35,8 +35,8 @@ function sendImage(query, msg, nsfw) {
                 break;
         }
     };
-    var r = Math.random() < 0;
-    if (true) {
+    var r = Math.random() < 0.5;
+    if (r) {
         bing.getImageData(query, nsfw, resultfunc);
     } else {
         google.getImageData(query, nsfw, resultfunc);
@@ -48,7 +48,7 @@ function onCommand(command, query, msg) {
         case "image":
             sendImage(query, msg);
             break;
-        case "image":
+        case "nsfw":
             sendImage(query, msg, true);
             break;
     }
