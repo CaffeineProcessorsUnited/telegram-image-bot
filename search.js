@@ -6,9 +6,9 @@ var Keys = require('./keys');
 var Error = require('./errors');
 var extend = require('./extend');
 
-var Search = function (keys, config, generateUrl) {
+var Search = function (keys, config, generateRequestOptions) {
     var _keys, _config;
-    var _generateUrl = generateUrl;
+    var _generateRequestOptions = generateRequestOptions;
 
     var queryApi = function (query, nsfw, cb) {
         if (typeof nsfw === "function") {
@@ -16,11 +16,7 @@ var Search = function (keys, config, generateUrl) {
             nsfw = undefined;
         }
         _keys.useKey(function(key, success, error){
-            var url = _generateUrl(query, nsfw, key);
-            //console.log(url);
-            var options = {
-                url: url
-            };
+            var options = _generateRequestOptions(query, nsfw, key)
             request.get(options, function (err, res, body) {
                 if (err != null) {
                     console.error(err);

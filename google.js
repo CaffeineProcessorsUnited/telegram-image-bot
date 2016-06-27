@@ -19,13 +19,15 @@ var Google = function (keys, config) {
         };
         _config = extend(defaults, config || {});
         _search = new Search(keys || [], _config, function (query, nsfw) {
-          return 'https://www.googleapis.com/customsearch/v1'
-              + '?q=' + encodeURIComponent(query)
-              + '&searchType=image'
-              + '&safe=' + ((nsfw || false) ? 'off' : 'high')
-              + '&filter=1'
-              + '&key=' + key
-              + '&cx=' + _config["engine"];
+          return {
+            url: 'https://www.googleapis.com/customsearch/v1'
+            + '?q=' + encodeURIComponent(query)
+            + '&searchType=image'
+            + '&safe=' + ((nsfw || false) ? 'off' : 'high')
+            + '&filter=1'
+            + '&key=' + key
+            + '&cx=' + _config["engine"]  
+          }
         });
     }
 

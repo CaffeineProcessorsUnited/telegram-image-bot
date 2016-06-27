@@ -20,12 +20,15 @@ var Bing = function (keys, config) {
         }
         _config = extend(defaults, config || {});
         _search = new Search(keys || [], _config, function (query, nsfw) {
-            return 'https://api.cognitive.microsoft.com/bing/v5.0/images/search'
-                + '?q=' + encodeURIComponent(query)
-                + '&count=' + _config["count"]
-                + '&offset=0'
-                + '&mkt=' + _config["market"]
-                + '&safeSearch=' + ((nsfw || false) ? 'Off' : 'Moderate');
+            return {
+              url: 'https://api.cognitive.microsoft.com/bing/v5.0/images/search'
+              + '?q=' + encodeURIComponent(query)
+              + '&count=' + _config["count"]
+              + '&offset=0'
+              + '&mkt=' + _config["market"]
+              + '&safeSearch=' + ((nsfw || false) ? 'Off' : 'Moderate'),
+              "Ocp-Apim-Subscription-Key": key
+            };
         });
     }
 
