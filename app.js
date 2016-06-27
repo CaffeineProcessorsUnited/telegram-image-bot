@@ -36,7 +36,7 @@ function sendImage(query, msg, nsfw) {
         }
     };
     var r = Math.random() < 0;
-    if (r) {
+    if (true) {
         bing.getImageData(query, nsfw, resultfunc);
     } else {
         google.getImageData(query, nsfw, resultfunc);
