@@ -1,0 +1,14 @@
+{
+	"restartable":"rs",
+	"execMap":{
+		"js":"nodejs"
+	},
+	"events":{
+		"restart":"gil pull && npm install"
+	}
+	"script": "app.js",
+	"ext":"js json",
+	"watch":['*.*'],
+	"verbose":true,
+	"stdout":true
+}
