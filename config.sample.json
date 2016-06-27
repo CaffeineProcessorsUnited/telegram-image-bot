@@ -18,9 +18,9 @@
     "keys": [
       "ONE OR MORE GOOGLE CUSTON SEARCH API KEY(S)"
     ],
-    "engine" : "GOOGLE CUSTOM SEARCH IDENTIFIER",
     "config": {
-      "count": 200
+      "count": 200,
+      "engine" : "GOOGLE CUSTOM SEARCH IDENTIFIER"
     }
   }
 }

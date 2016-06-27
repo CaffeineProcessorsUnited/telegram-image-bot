@@ -2,46 +2,11 @@
 // Google.js
 
 var request = require('request');
+var Keys = require('./keys');
+var Error = require('./errors');
 
 var Google = function (keys, config) {
     var _keys, _config;
-
-    var _errors = [];
-
-    var addError = function (name, message) {
-        if (_errors.length == 42) {
-            _errors.push({
-                "name": "answer_to_the_ultimate_question_of_life_the_universe_and_everything",
-                "message": "You just found the Answer to the Ultimate Question of Life, The Universe, and Everything!"
-            });
-        }
-        _errors.push({
-            "name": name,
-            "message": message
-        });
-    }
-
-    addError("no_error", "There were no errors.");
-    addError("unknown_error", "I don't know why it didn't work. :(");
-    addError("connection_error", "The bot couldn't connect to the API server");
-    addError("no_keys_usable", "Apparently you have keys with quota left.");
-    addError("invalid_key", "The key is invalid.");
-    addError("infinite_loop_detected", "Loop-Loop-Loop");
-    addError("malformed_response", "The bot couldn't parse the API servers response.");
-
-    var errorCode = function (name) {
-        for (var i = 0; i < _errors.length; i++) {
-            if (_errors[i]["name"] === name) {
-                return i;
-            }
-        }
-        // Don't have 42 error messages
-        return 42;
-    }
-
-    var errorMessage = function (code) {
-        return _errors[code]["message"];
-    }
 
     var clone = function (o) {
         if (undefined == o || typeof o !== "object") {
@@ -71,91 +36,17 @@ var Google = function (keys, config) {
         return Math.floor(Math.random() * (high - low) + low);
     };
 
-    var getAvailableApiKey = function () {
-        var result = undefined;
-        for (var i = 0; i < _keys.length; i++) {
-            if (_keys[i]["usable"] === true) {
-                result = {
-                    "i": i,
-                    "key": _keys[i]["key"]
-                };
-                break;
-            }
-        }
-        return result;
-    }
-
-    var getLeastUsedApiKey = function () {
-        var result = {
-            "i": -1,
-            "date": new Date().getTime()
-        };
-        for (var i = 0; i < _keys.length; i++) {
-            if (_keys[i]["usable"] === true) {
-                result = {
-                    "i": i,
-                    "key": _keys[i]["key"]
-                };
-                break;
-            }
-        }
-        return result;
-    }
-
-    /*
-     Use a key, if it falis try the next key
-     */
-    var useKey = function (onUse, keysUsed) {
-        var keysUsed = (keysUsed === undefined) ? -1 : keysUsed;
-        var onSuccess = function (cb, key, data) {
-            _keys[key["i"]]["usable"] = true;
-            _keys[key["i"]]["usedon"] = new Date().getTime();
-            cb({
-                "status": errorCode("no_error"),
-                "data": data
-            });
-        };
-        var onError = function (cb, key) {
-            _keys[key["i"]]["usable"] = false;
-            _keys[key["i"]]["usedon"] = new Date().getTime();
-            var result = useKey(onUse, ++keysUsed);
-            if (result === false) {
-                return cb({
-                    "status": errorCode("no_keys_usable")
-                });
-            }
-            return result;
-        };
-        var key;
-        if (keysUsed === -1) {
-            key = getAvailableApiKey();
-        }
-        if (key === undefined && keysUsed < _keys.length) {
-            key = {
-                "i": keysUsed,
-                "key": _keys[keysUsed]["key"]
-            };
-        }
-        // try with another key
-        if (keysUsed < _keys.length) {
-            onUse(key, keysUsed, onSuccess, onError);
-            return true;
-        }
-        // we tried all keys... we dont have any quota left
-        return false;
-
-    }
-
     var generateUrl = function (query, nsfw, key) {
+        console.log("---CONFIG:",_config);
         nsfw = nsfw || false;
         return 'https://www.googleapis.com/customsearch/v1'
             + '?q=' + encodeURIComponent(query)
             + '&searchType=image'
-            + '&safe=' + (nsfw ? 'off' : 'on')
+            + '&safe=' + (nsfw ? 'off' : 'high')
             + '&filter=1'
             + '&key=' + key
             + '&cx=' + _config["engine"];
-    }
+    };
 
     /*
      status:
@@ -170,67 +61,65 @@ var Google = function (keys, config) {
             cb = nsfw;
             nsfw = undefined;
         }
-        useKey(function (key, keysUsed, success, error) {
+        _keys.useKey(function(key, success, error){
+            var url = generateUrl(query, nsfw, key);
+            console.log(url);
             var options = {
-                url: generateUrl(query, nsfw, key["key"]),
+                url: url
             };
             request.get(options, function (err, res, body) {
                 if (err != null) {
                     console.error(err);
-                    cb({
-                        "status": errorCode("connection_error")
-                    });
+                    error();
                 } else {
                     switch (res.statusCode) {
                         case 200:
+                            var ok = true;
                             try {
                                 var json = JSON.parse(body);
-                                success(cb, key, json);
                             } catch (e) {
+                                console.error("Received data was malformed json! Unable to parse.",body);
                                 //Received data was malformed json! Unable to parse.
-                                cb({
-                                    "status": errorCode("malformed_response")
-                                });
+                                ok = false;
+                                error();
                             }
+                            if(ok)
+                                success(json);
                             break;
                         case 401:
                             // This is an invalid key! You should remove it. But we will try a different key
                             console.error("The key\n", key, "\n is invalid! You should remove it from the configuration file.");
-                            error(cb, key);
+                            error();
                             break;
                         case 403:
                             // This key doesn't work. Try another one
-                            error(cb, key);
+                            console.error("This key doesn't work. Try another one");
+                            error();
                             break;
                         default:
                             // What happened?
-                            cb({
-                                "status": errorCode("unknown_error"),
+                            console.error("unknown error", body);
+                            error({
+                                "status": Error.unknown_error,
                                 "data": body
                             });
                             break;
                     }
                 }
             });
-        });
-    }
+        },cb,cb);
+    };
 
     // Constructor
     function Google(keys, config) {
         if (!(this instanceof Google)) {
-            return new Google(keys);
+            return new Google(keys,config);
         }
-        keys = keys || [];
-        _keys = [];
-        for (var i = 0; i < keys.length; i++) {
-            _keys.push({
-                "key": keys[i],
-                "usable": true
-            });
-        }
+        _keys = new Keys(keys || []);
+        
         var defaults = {
-            "count": 200,
-        }
+            "count": 200
+        };
         _config = extend(defaults, config || {});
 
     }
@@ -239,7 +128,7 @@ var Google = function (keys, config) {
         queryApi("test", function (result) {
             if (!result) {
                 result = {
-                    "status": errorCode("unknown_error")
+                    "status": Error.unknown_error
                 };
             }
             cb(result);
@@ -247,6 +136,7 @@ var Google = function (keys, config) {
     };
 
     Google.prototype.getImageData = function (query, nsfw, cb) {
+        var ok = false;
         if (typeof nsfw === "function") {
             cb = nsfw;
             nsfw = undefined;
@@ -254,25 +144,42 @@ var Google = function (keys, config) {
         queryApi(query, nsfw, function (result) {
             if (!result) {
                 result = {
-                    "status": errorCode("unknown_error")
+                    "status": Error.unknown_error
                 };
-            } else if (result["status"] === errorCode("no_error")) {
-                var data = result["data"]
-                if (data && data["value"]) {
-                    var value = data["value"];
-                    if (typeof value === "object" && Array.isArray(value)) {
-                        var max = Math.min(_config["count"], value.length);
-                        result["image"] = value[randomInt(0, max)];
+            } else if (result["status"] === Error.no_error) {
+                var data = result["data"];
+                if (data && data["items"]) {
+                    var items = data["items"];
+                    if (typeof items === "object" && Array.isArray(items)) {
+                        var max = Math.min(_config["count"], items.length);
+                        var image = items[randomInt(0, max)];
+                        ok = true;
+                        cb({
+                            status: 0,
+                            image: {
+                                contentUrl: image["link"],
+                                name: image["title"]
+                            }
+                        });
                     }
                 }
-                delete result["data"];
             }
-            result["message"] = errorMessage(result["status"]);
-            cb(result);
+            if(!ok){
+                cb({
+                    status: 1,
+                    message: result["status"]
+                });
+            }
         });
     };
 
+    console.log("-----++++####",config);
     return new Google(keys, config);
-}
+};
+var exports = module.exports = Google;
+/*var test = Google(["AIzaSyBWWUNm5nuTg1TZzqRjPV81gIGpHObiu-E"],{"engine":"003902443275155350118:lty-b98cdnm"});
+test.getImageData("test",function(data){
+    console.log(data);
+});
 
-var exports = module.exports = Google
+*/

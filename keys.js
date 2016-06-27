@@ -1,5 +1,7 @@
 "use strict";
 
+var Error = require('./errors');
+
 var Keys = function(keys){
     var _keys;
 
@@ -46,7 +48,7 @@ var Keys = function(keys){
 
     var useKey = function(onUse, success, error){
         var key = getPreferredKey();
-        console.log("selcted key"+ key);
+        console.log("selcted key "+ key);
 
         // Key was usable
         var onSuccess = function(data){
@@ -55,13 +57,13 @@ var Keys = function(keys){
                     _keys[i]["usable"] = true;
             }
             success({
-                "status": "no error",
+                "status": Error.no_error,
                 "data": data
             })
         };
 
         // Key was unusable
-        var onError = function(cb){
+        var onError = function(){
             for(var i = 0; i< _keys.length; ++i){
                 if(_keys[i]["key"] == key)
                     _keys[i]["usable"] = false;
@@ -72,7 +74,7 @@ var Keys = function(keys){
         // No more keys available
         var onFinalError = function(){
             error({
-                "status": "no keys available"
+                "status": Error.no_keys_usable
             });
         };
 

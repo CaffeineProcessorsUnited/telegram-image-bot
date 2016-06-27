@@ -35,7 +35,7 @@ function sendImage(query, msg, nsfw) {
                 break;
         }
     };
-    var r = math.random() > 0.5;
+    var r = Math.random() < 0;
     if (r) {
         bing.getImageData(query, nsfw, resultfunc);
     } else {
