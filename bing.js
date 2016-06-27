@@ -27,7 +27,7 @@ var Bing = function (keys, config) {
               + '&offset=0'
               + '&mkt=' + _config["market"]
               + '&safeSearch=' + ((nsfw || false) ? 'Off' : 'Moderate'),
-              "Ocp-Apim-Subscription-Key": key
+              headers : {"Ocp-Apim-Subscription-Key": key}
             };
         });
     }
