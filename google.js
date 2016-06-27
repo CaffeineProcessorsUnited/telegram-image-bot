@@ -18,7 +18,7 @@ var Google = function (keys, config) {
             "count": 200
         };
         _config = extend(defaults, config || {});
-        _search = new Search(keys || [], _config, function (query, nsfw) {
+        _search = new Search(keys || [], _config, function (query, nsfw,key) {
           return 'https://www.googleapis.com/customsearch/v1'
               + '?q=' + encodeURIComponent(query)
               + '&searchType=image'
