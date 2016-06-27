@@ -19,7 +19,7 @@ var Bing = function (keys, config) {
             "market": 'en-en'
         }
         _config = extend(defaults, config || {});
-        _search = new Search(keys || [], _config, function (query, nsfw) {
+        _search = new Search(keys || [], _config, function (query, nsfw, key) {
             return {
               url: 'https://api.cognitive.microsoft.com/bing/v5.0/images/search'
               + '?q=' + encodeURIComponent(query)

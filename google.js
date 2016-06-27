@@ -18,7 +18,7 @@ var Google = function (keys, config) {
             "count": 200
         };
         _config = extend(defaults, config || {});
-        _search = new Search(keys || [], _config, function (query, nsfw) {
+        _search = new Search(keys || [], _config, function (query, nsfw, key) {
           return {
             url: 'https://www.googleapis.com/customsearch/v1'
             + '?q=' + encodeURIComponent(query)
@@ -26,8 +26,8 @@ var Google = function (keys, config) {
             + '&safe=' + ((nsfw || false) ? 'off' : 'high')
             + '&filter=1'
             + '&key=' + key
-            + '&cx=' + _config["engine"]  
-          }
+            + '&cx=' + _config["engine"]
+          };
         });
     }
 
