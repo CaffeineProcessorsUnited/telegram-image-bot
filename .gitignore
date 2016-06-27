@@ -38,6 +38,16 @@ jspm_packages
 
 # Configuration files
 config.json
+
+# Runtime files
+*.nodemon
+
+
+
+
+
+
+# IDEA
 .idea/workspace.xml
 .idea/tasks.xml
 .idea/dictionaries

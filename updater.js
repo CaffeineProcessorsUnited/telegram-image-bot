@@ -30,9 +30,10 @@ handler.on('error', function (err) {
 
 handler.on('push', function (event) {
 	simpleGit.pull(function(err, update) {
-	if(update && update.summary.changes) {
-		// restart the app
-		require('child_process').exec('npm restart');
-	}
+  	if(update && update.summary.changes) {
+  		// restart the app by installing dependencies and touching a restart file for nodemon
+  		require('child_process').exec('npm install && touch updated.nodemon');
+  	}
  });
 });
+console.log("test");
