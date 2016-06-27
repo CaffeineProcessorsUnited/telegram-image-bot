@@ -19,8 +19,8 @@ var handler = createHandler({
 
 http.createServer(function (req, res) {
 	handler(req, res, function (err) {
-	res.statusCode = 404;
-	res.end('');
+  	res.statusCode = 404;
+  	res.end('');
 	});
 }).listen(config.get("updater", "port"));
 
