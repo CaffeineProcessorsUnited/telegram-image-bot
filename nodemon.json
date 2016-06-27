@@ -4,7 +4,7 @@
 		"js":"nodejs"
 	},
 	"events":{
-		"restart":"gil pull && npm install"
+		"restart":"git pull && npm install"
 	}
 	"script": "app.js",
 	"ext":"js json",
