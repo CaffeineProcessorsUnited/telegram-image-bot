@@ -1,9 +1,9 @@
 "use strict";
-// bing.js
+// Google.js
 
 var request = require('request');
 
-var Bing = function (keys, config) {
+var Google = function (keys, config) {
     var _keys, _config;
 
     var _errors = [];
@@ -146,14 +146,15 @@ var Bing = function (keys, config) {
 
     }
 
-    var generateUrl = function (query, nsfw) {
+    var generateUrl = function (query, nsfw, key) {
         nsfw = nsfw || false;
-        return 'https://api.cognitive.microsoft.com/bing/v5.0/images/search'
+        return 'https://www.googleapis.com/customsearch/v1'
             + '?q=' + encodeURIComponent(query)
-            + '&count=' + _config["count"]
-            + '&offset=0'
-            + '&mkt=' + _config["market"]
-            + '&safeSearch=' + (nsfw ? 'Off' : 'Moderate');
+            + '&searchType=image'
+            + '&safe=' + (nsfw ? 'off' : 'on')
+            + '&filter=1'
+            + '&key=' + key
+            + '&cx=' + _config["engine"];
     }
 
     /*
@@ -171,10 +172,7 @@ var Bing = function (keys, config) {
         }
         useKey(function (key, keysUsed, success, error) {
             var options = {
-                url: generateUrl(query, nsfw),
-                headers: {
-                    'Ocp-Apim-Subscription-Key': key["key"]
-                }
+                url: generateUrl(query, nsfw, key["key"]),
             };
             request.get(options, function (err, res, body) {
                 if (err != null) {
@@ -218,9 +216,9 @@ var Bing = function (keys, config) {
     }
 
     // Constructor
-    function Bing(keys, config) {
-        if (!(this instanceof Bing)) {
-            return new Bing(keys);
+    function Google(keys, config) {
+        if (!(this instanceof Google)) {
+            return new Google(keys);
         }
         keys = keys || [];
         _keys = [];
@@ -231,14 +229,13 @@ var Bing = function (keys, config) {
             });
         }
         var defaults = {
-            "count": 1000,
-            "market": 'en-en'
+            "count": 200,
         }
         _config = extend(defaults, config || {});
 
     }
 
-    Bing.prototype.test = function (cb) {
+    Google.prototype.test = function (cb) {
         queryApi("test", function (result) {
             if (!result) {
                 result = {
@@ -249,7 +246,7 @@ var Bing = function (keys, config) {
         });
     };
 
-    Bing.prototype.getImageData = function (query, nsfw, cb) {
+    Google.prototype.getImageData = function (query, nsfw, cb) {
         if (typeof nsfw === "function") {
             cb = nsfw;
             nsfw = undefined;
@@ -275,7 +272,7 @@ var Bing = function (keys, config) {
         });
     };
 
-    return new Bing(keys, config);
+    return new Google(keys, config);
 }
 
-var exports = module.exports = Bing
+var exports = module.exports = Google
