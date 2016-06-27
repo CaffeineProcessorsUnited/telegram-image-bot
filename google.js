@@ -37,7 +37,7 @@ var Google = function (keys, config) {
     };
 
     var generateUrl = function (query, nsfw, key) {
-        console.log("---CONFIG:",_config);
+        //console.log("---CONFIG:",_config, query, nsfw, key);
         nsfw = nsfw || false;
         return 'https://www.googleapis.com/customsearch/v1'
             + '?q=' + encodeURIComponent(query)
@@ -63,7 +63,7 @@ var Google = function (keys, config) {
         }
         _keys.useKey(function(key, success, error){
             var url = generateUrl(query, nsfw, key);
-            console.log(url);
+            //console.log(url);
             var options = {
                 url: url
             };

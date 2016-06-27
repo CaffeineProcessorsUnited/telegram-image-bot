@@ -48,7 +48,7 @@ function onCommand(command, query, msg) {
         case "image":
             sendImage(query, msg);
             break;
-        case "image":
+        case "nsfw":
             sendImage(query, msg, true);
             break;
     }
