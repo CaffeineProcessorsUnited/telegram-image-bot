@@ -5,27 +5,34 @@ var Error = require('./errors');
 var Keys = function(keys){
     var _keys;
 
+    var Key = function(idx){
+        _keys[idx]["usedon"] = new Date().getTime();
+        return _keys[idx]["key"];
+    };
+
     var getPreferredKey = function(){
         var key = undefined;
         var lastUsedIndex = new Date().getTime();
 
         for(var idx=0; idx < _keys.length; ++idx){
+            //Prefer usable keys
             if(!_keys[idx]["usable"])
                 continue;
+
             //Prefer unused keys
             if(!_keys[idx]["usedon"]){
-                _keys[idx]["usedon"] = new Date().getTime();
-                return _keys[idx]["key"];
+                return Key(idx);
             }
+
             //Prefer least recently used keys
-            if(keys[idx]["usedon"] < lastUsedIndex){
+            if(_keys[idx]["usedon"] < lastUsedIndex){
                 key = idx;
                 lastUsedIndex = keys[idx]["usedon"]
             }
         }
+
         if(key !== undefined){
-            _keys[key]["usedon"] = new Date().getTime();
-            return _keys[key]["key"];
+            return Key(key);
         }
 
         // No "usable" key found - Try "unusable"
@@ -34,14 +41,17 @@ var Keys = function(keys){
                 continue;
             //Prefer unused keys
             if(!_keys[idx]["usedon"]){
-                _keys[idx]["usedon"] = new Date().getTime();
-                return _keys[idx]["key"];
+                return Key(key);
             }
             //Prefer least recently used keys
-            if(keys[idx]["usedon"] < lastUsedIndex){
+            if(_keys[idx]["usedon"] < lastUsedIndex){
                 key = idx;
                 lastUsedIndex = keys[idx]["usedon"]
             }
+        }
+
+        if(key !== undefined){
+            return Key(key);
         }
         return key;
     };

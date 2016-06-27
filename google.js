@@ -173,7 +173,6 @@ var Google = function (keys, config) {
         });
     };
 
-    console.log("-----++++####",config);
     return new Google(keys, config);
 };
 var exports = module.exports = Google;
