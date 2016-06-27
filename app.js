@@ -58,6 +58,9 @@ function onCommand(command, query, msg) {
 bot.onText(/\/image (.+)/, function (msg, match) {
     onCommand("image", match[1], msg);
 });
+bot.onText(/\/get (.+)/, function (msg, match) {
+    onCommand("image", match[1], msg);
+});
 
 if (config.get("bot", "nsfw")) {
     // Matches /nsfw [whatever]
