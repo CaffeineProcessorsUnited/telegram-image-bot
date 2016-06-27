@@ -54,8 +54,8 @@ var Bing = function (keys, config) {
                       cb({
                           status: 0,
                           image: {
-                              contentUrl: image["link"],
-                              name: image["title"]
+                              contentUrl: image["contentUrl"],
+                              name: image["name"]
                           }
                       });
                     }
