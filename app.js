@@ -13,6 +13,10 @@ var bot = new TelegramBot(config.get("telegram", "token"), {polling: true});
 var bing = require('./bing.js')(config.get("bing", "keys"), config.get("bing", "config"));
 var google = require('./google.js')(config.get("google", "keys"), config.get("google", "config"));
 
+var gm = require('gm').subClass({imageMagick: true});
+var temp = require('temp').track();
+var fs = require('fs');
+
 var random = require('./random');
 var availableProvider = [
     {
@@ -25,8 +29,32 @@ var availableProvider = [
     }
 ];
 
+var stream = require('stream');
+var util = require('util');
+
+// node v0.10+ use native Transform, else polyfill
+var Transform = stream.Transform ||
+  require('readable-stream').Transform;
+
+function Upper(options) {
+  // allow use without new
+  if (!(this instanceof Upper)) {
+    return new Upper(options);
+  }
+
+  // init Transform
+  Transform.call(this, options);
+}
+util.inherits(Upper, Transform);
+
+Upper.prototype._transform = function (chunk, enc, cb) {
+  this.push(chunk);
+  cb();
+};
+
 function sendImage(query, msg, nsfw, provider) {
-    var provider = provider || availableProvider[random.randomInt(0, availableProvider.length)];
+    var provider = (provider === undefined) ? availableProvider[random.randomInt(0, availableProvider.length)] : provider;
+    console.log("using: " + provider["name"]);
     var msgId = msg.message_id;
     var chatId = msg.chat.id;
     var resultfunc = function (result) {
@@ -35,9 +63,17 @@ function sendImage(query, msg, nsfw, provider) {
                 var image = result["image"];
                 var path = image["contentUrl"];
                 var caption = image["name"];
-                bot.sendPhoto(chatId, request(path), {
+                var tmpout = temp.createWriteStream({suffix: ".png"});
+                gm(request(path)).stream('png').on('data', function(data) {
+                  tmpout.write(data);
+                }).on('end', function() {
+                  bot.sendPhoto(chatId, tmpout.path, {
                     reply_to_message_id: msgId,
                     caption: caption
+                  }).then(function() {
+                    tmpout.end();
+                    temp.cleanupSync();
+                  });
                 });
                 break;
             default:
@@ -57,13 +93,13 @@ function sendImage(query, msg, nsfw, provider) {
     }
 }
 
-function onCommand(command, query, msg) {
+function onCommand(command, query, msg, provider) {
     switch (command) {
         case "image":
-            sendImage(query, msg);
+            sendImage(query, msg, undefined, provider);
             break;
         case "nsfw":
-            sendImage(query, msg, true);
+            sendImage(query, msg, true, provider);
             break;
     }
 }
