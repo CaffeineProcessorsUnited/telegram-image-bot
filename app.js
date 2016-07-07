@@ -104,6 +104,16 @@ function onCommand(command, query, msg, provider) {
     }
 }
 
+function _1337(str) {
+    str = str.replace("i","1").replace("I","1")
+        .replace("a","4").replace("A","4")
+        .replace("e","3").replace("E","3")
+        .replace("t","7").replace("T","7")
+        .replace("b","8").replace("B","8")
+        .replace("o","0").replace("O","0")
+        .replace("s","5").replace("S","5")
+}
+
 // Matches /image [whatever]
 bot.onText(/\/image (.+)/, function (msg, match) {
     onCommand("image", match[1], msg);
@@ -116,6 +126,12 @@ bot.onText(/\/google (.+)/, function (msg, match) {
 });
 bot.onText(/\/bing (.+)/, function (msg, match) {
     onCommand("image", match[1], msg, availableProvider[1]);
+});
+bot.onText(/\/wow (.+)/, function (msg, match) {
+    onCommand("image", "wow such "+match[1], msg);
+});
+bot.onText(/\/1337 (.+)/, function (msg, match) {
+    onCommand("image", _1337(match[1]), msg);
 });
 
 if (config.get("bot", "nsfw")) {
