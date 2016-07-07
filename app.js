@@ -105,15 +105,15 @@ function onCommand(command, query, msg, provider) {
 }
 
 function _1337(str) {
-    str = str.replace("i","1").replace("I","1")
-        .replace("a","4").replace("A","4")
+    return str.replace("i","1").replace("I","1")
+        .replace("z","2").replace("Z","2")
         .replace("e","3").replace("E","3")
-        .replace("t","7").replace("T","7")
-        .replace("b","8").replace("B","8")
-        .replace("o","0").replace("O","0")
+        .replace("a","4").replace("A","4")
         .replace("s","5").replace("S","5")
-#    console.log(str);
-    return str;
+        .replace("g","6").replace("G","6")
+        .replace("t","7").replace("T","7").replace("l","7").replace("L","7")
+        .replace("b","8").replace("B","8")
+        .replace("o","0").replace("O","0");
 }
 
 // Matches /image [whatever]
