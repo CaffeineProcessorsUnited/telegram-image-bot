@@ -50,14 +50,21 @@ var Bing = function (keys, config) {
                     if (typeof value === "object" && Array.isArray(value)) {
                       var max = Math.min(_config["count"], value.length);
                       var image = value[random.randomInt(0, max)];
-                      ok = true;
-                      cb({
-                          status: 0,
-                          image: {
-                              contentUrl: image["contentUrl"],
-                              name: image["name"]
-                          }
-                      });
+                      if (image != undefined && image["contentUrl"] != undefined){
+                          ok = true;
+                          cb({
+                              status: 0,
+                              image: {
+                                  contentUrl: image["contentUrl"],
+                                  name: image["name"]
+                              }
+                          });
+                      } else {
+                          cb({
+                              status: 1,
+                              message: Error.message(result["status"])
+                          });
+                      }
                     }
                 }
             }

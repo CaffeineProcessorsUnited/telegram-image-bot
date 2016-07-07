@@ -112,6 +112,8 @@ function _1337(str) {
         .replace("b","8").replace("B","8")
         .replace("o","0").replace("O","0")
         .replace("s","5").replace("S","5")
+#    console.log(str);
+    return str;
 }
 
 // Matches /image [whatever]
