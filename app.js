@@ -31,29 +31,6 @@ var availableProvider = [
     }
 ];
 
-var stream = require('stream');
-var util = require('util');
-
-// node v0.10+ use native Transform, else polyfill
-var Transform = stream.Transform ||
-  require('readable-stream').Transform;
-
-function Upper(options) {
-  // allow use without new
-  if (!(this instanceof Upper)) {
-    return new Upper(options);
-  }
-
-  // init Transform
-  Transform.call(this, options);
-}
-util.inherits(Upper, Transform);
-
-Upper.prototype._transform = function (chunk, enc, cb) {
-  this.push(chunk);
-  cb();
-};
-
 function sendImage(query, msg, nsfw, provider) {
     var provider = (provider === undefined) ? availableProvider[random.randomInt(0, availableProvider.length)] : provider;
     console.log("using: " + provider["name"]);
@@ -66,7 +43,7 @@ function sendImage(query, msg, nsfw, provider) {
         var tmpout = temp.createWriteStream({suffix: ".png"});
 
         var gms = gm(request(path));
-        
+
         if(resolution){
             gms = gms.resize(resolution[0],resolution[1]);
         }
@@ -118,7 +95,8 @@ function _1337(str) {
         .replace("a","4").replace("A","4")
         .replace("s","5").replace("S","5")
         .replace("g","6").replace("G","6")
-        .replace("t","7").replace("T","7").replace("l","7").replace("L","7")
+        .replace("t","7").replace("T","7")
+        .replace("l","7").replace("L","7")
         .replace("b","8").replace("B","8")
         .replace("o","0").replace("O","0");
 }
