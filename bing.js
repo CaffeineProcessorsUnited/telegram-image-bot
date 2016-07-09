@@ -46,8 +46,15 @@ var Bing = function (keys, config) {
                 var value = data["value"];
                 if (typeof value === "object" && Array.isArray(value)) {
                     var max = Math.min(_config["count"], value.length);
+                    if (max == 0) {
+                      error({
+                          status: 1,
+                          message: Error.message(Error.no_results)
+                      });
+                      return;
+                    }
                     var image = value[random.randomInt(0, max)];
-                    if (image != undefined && image["contentUrl"] != undefined){
+                    if (image !== undefined && image["contentUrl"] != undefined){
                         success({
                             contentUrl: image["contentUrl"],
                             name: image["name"]
@@ -56,7 +63,6 @@ var Bing = function (keys, config) {
                     }
                 }
             }
-
             error({
                 status: 1,
                 message: Error.message(Error.unknown_error)

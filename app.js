@@ -9,30 +9,37 @@ var request = require('request');
 
 var TelegramBot = require('node-telegram-bot-api');
 // Setup polling way
-var bot = new TelegramBot(config.get("telegram", "token"), {polling: true});
+var bot = new TelegramBot(config.get("telegram", "token"), { polling: true });
+
+var availableProvider = {};
+
 var bing = require('./bing.js')(config.get("bing", "keys"), config.get("bing", "config"));
+if (config.get("bing", "keys") && config.get("bing", "keys").length > 0) {
+  availableProvider["bing"] = {
+    name: "Bing",
+    class: bing
+  };
+}
+
 var google = require('./google.js')(config.get("google", "keys"), config.get("google", "config"));
+if (config.get("google", "keys") && config.get("google", "keys").length > 0) {
+  availableProvider["google"] = {
+    name: "Google",
+    class: google
+  };
+}
 
 var gm = require('gm').subClass({imageMagick: true});
 var temp = require('temp').track();
 var fs = require('fs');
-
-var resolution = config.get("bot","resolution");
-
 var random = require('./random');
-var availableProvider = [
-    {
-        "name": "Google",
-        "class": google
-    },
-    {
-        "name": "Bing",
-        "class": bing
-    }
-];
+var leet = require('./leet')();
 
-function sendImage(query, msg, nsfw, provider) {
-    var provider = (provider === undefined) ? availableProvider[random.randomInt(0, availableProvider.length)] : provider;
+var resolution = config.get("bot", "resolution");
+
+function sendImage(query, msg, nsfw, providername) {
+    var providername = (providername === undefined) ? Object.keys(availableProvider)[random.randomInt(0, Object.keys(availableProvider).length)] : providername;
+    var provider = availableProvider[providername];
     console.log("using: " + provider["name"]);
     var msgId = msg.message_id;
     var chatId = msg.chat.id;
@@ -88,19 +95,6 @@ function onCommand(command, query, msg, provider) {
     }
 }
 
-function _1337(str) {
-    return str.replace("i","1").replace("I","1")
-        .replace("z","2").replace("Z","2")
-        .replace("e","3").replace("E","3")
-        .replace("a","4").replace("A","4")
-        .replace("s","5").replace("S","5")
-        .replace("g","6").replace("G","6")
-        .replace("t","7").replace("T","7")
-        .replace("l","7").replace("L","7")
-        .replace("b","8").replace("B","8")
-        .replace("o","0").replace("O","0");
-}
-
 // Matches /image [whatever]
 bot.onText(/\/image (.+)/, function (msg, match) {
     onCommand("image", match[1], msg);
@@ -109,16 +103,16 @@ bot.onText(/\/get (.+)/, function (msg, match) {
     onCommand("image", match[1], msg);
 });
 bot.onText(/\/google (.+)/, function (msg, match) {
-    onCommand("image", match[1], msg, availableProvider[0]);
+    onCommand("image", match[1], msg, "google");
 });
 bot.onText(/\/bing (.+)/, function (msg, match) {
-    onCommand("image", match[1], msg, availableProvider[1]);
+    onCommand("image", match[1], msg, "bing");
 });
 bot.onText(/\/wow (.+)/, function (msg, match) {
     onCommand("image", "wow such "+match[1], msg);
 });
 bot.onText(/\/1337 (.+)/, function (msg, match) {
-    onCommand("image", _1337(match[1]), msg);
+    onCommand("image", leet.get(match[1]), msg);
 });
 
 if (config.get("bot", "nsfw")) {

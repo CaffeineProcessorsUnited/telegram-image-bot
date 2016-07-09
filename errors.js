@@ -18,8 +18,8 @@ var Errors = function(){
     };
 
     var error = {
-        "code":errorCode,
-        "message":errorMessage
+        "code": errorCode,
+        "message": errorMessage
     };
 
     var addError = function (name, message) {
@@ -46,6 +46,7 @@ var Errors = function(){
     addError("invalid_key", "The key is invalid.");
     addError("infinite_loop_detected", "Loop-Loop-Loop");
     addError("malformed_response", "The bot couldn't parse the API servers response.");
+    addError("no_results", "I couldn't find any images for you :(");
 
     return error;
 };

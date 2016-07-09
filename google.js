@@ -45,13 +45,21 @@ var Google = function (keys, config) {
                 var items = data["items"];
                 if (typeof items === "object" && Array.isArray(items)) {
                     var max = Math.min(_config["count"], items.length);
+                    if (max == 0) {
+                      error({
+                          status: 1,
+                          message: Error.message(Error.no_results)
+                      });
+                      return;
+                    }
                     var image = items[random.randomInt(0, max)];
-
-                    success({
-                        contentUrl: image["link"],
-                        name: image["title"]
-                    });
-                    return;
+                    if (image !== undefined) {
+                      success({
+                          contentUrl: image["link"],
+                          name: image["title"]
+                      });
+                      return;
+                    }
                 }
             }
 
