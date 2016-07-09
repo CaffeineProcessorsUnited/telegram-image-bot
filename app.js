@@ -71,7 +71,7 @@ function sendImage(query, msg, nsfw, provider) {
         var tmpout = temp.createWriteStream({suffix: ".png"});
 
         var gms = gm(request(path));
-        console.log(resolution);
+
         if(resolution){
             gms = gms.resize(resolution[0],resolution[1]);
         }
