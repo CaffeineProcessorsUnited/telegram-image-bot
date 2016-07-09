@@ -50,6 +50,39 @@ var leet = require('./leet')();
 
 var resolution = config.get("bot", "resolution");
 
+String.prototype.endsWith = function(suffix) {
+    return this.indexOf(suffix, this.length - suffix.length) !== -1;
+};
+
+function sendPhoto(chatID, path, param){
+    var tmpout = temp.createWriteStream({suffix: ".png"});
+    var gms = gm(request(path));
+
+    if(resolution){
+        gms = gms.resize(resolution[0],resolution[1]);
+    }
+
+    gms.stream('png').on('data', function(data) {
+        tmpout.write(data);
+    }).on('end', function() {
+        bot.sendPhoto(chatID, tmpout.path, param)
+            .then(function() {
+            tmpout.end();
+            temp.cleanupSync();
+        });
+    });
+}
+
+function sendVideo(chatID, path, param){
+    bot.sendVideo(chatID, request(path), param);
+}
+
+function sendText(chatID, text, param){
+    bot.sendMessage(chatID,text,param);
+}
+
+
+
 function sendImage(query, msg, nsfw, providername) {
     var providername = (providername === undefined || availableProvider[providername] === undefined)
      ? Object.keys(availableProvider)[random.randomInt(0, Object.keys(availableProvider).length)] : providername;
@@ -57,7 +90,7 @@ function sendImage(query, msg, nsfw, providername) {
     var msgId = msg.message_id;
     var chatId = msg.chat.id;
     if (provider === undefined) {
-      bot.sendMessage(chatId, "There are no search providers available!", {
+      sendMessage(chatId, "There are no search providers available!", {
           reply_to_message_id: msgId
       });
     }
@@ -66,30 +99,24 @@ function sendImage(query, msg, nsfw, providername) {
     var onSuccess = function(result){
         var path = result["contentUrl"];
         var caption = result["name"];
-        var tmpout = temp.createWriteStream({suffix: ".png"});
+        console.log(path);
 
-        var gms = gm(request(path));
-
-        if(resolution){
-            gms = gms.resize(resolution[0],resolution[1]);
-        }
-
-        gms.stream('png').on('data', function(data) {
-            tmpout.write(data);
-        }).on('end', function() {
-            bot.sendPhoto(chatId, tmpout.path, {
+        if(path.endsWith("mp4") || path.endsWith("webm") || path.endsWith("gif")){
+            sendVideo(chatId,path,{
                 reply_to_message_id: msgId,
                 caption: caption
-            }).then(function() {
-                tmpout.end();
-                temp.cleanupSync();
-            });
-        });
+            })
+        } else {
+            sendPhoto(chatId,path,{
+                reply_to_message_id: msgId,
+                caption: caption
+            })
+        }
     };
 
     var onError = function(result){
         var message = result.message || "Unknown error!";
-        bot.sendMessage(chatId, message, {
+        sendMessage(chatId, message, {
             reply_to_message_id: msgId
         });
     };
@@ -97,7 +124,7 @@ function sendImage(query, msg, nsfw, providername) {
     if (provider["class"]) {
         provider["class"].getImageData(query, nsfw, onSuccess, onError);
     } else {
-        bot.sendMessage(chatId, "Can't search for images with provider\n```\n" + JSON.stringify(provider) + "\n```", {
+        sendMessage(chatId, "Can't search for images with provider\n```\n" + JSON.stringify(provider) + "\n```", {
             reply_to_message_id: msgId
         });
     }
