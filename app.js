@@ -41,9 +41,14 @@ function sendImage(query, msg, nsfw, providername) {
     var providername = (providername === undefined || availableProvider[providername] === undefined)
      ? Object.keys(availableProvider)[random.randomInt(0, Object.keys(availableProvider).length)] : providername;
     var provider = availableProvider[providername];
-    console.log("using: " + provider["name"]);
     var msgId = msg.message_id;
     var chatId = msg.chat.id;
+    if (provider === undefined) {
+      bot.sendMessage(chatId, "There are no search providers available!", {
+          reply_to_message_id: msgId
+      });
+    }
+    console.log("using: " + provider["name"]);
 
     var onSuccess = function(result){
         var path = result["contentUrl"];
