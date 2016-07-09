@@ -38,7 +38,8 @@ var leet = require('./leet')();
 var resolution = config.get("bot", "resolution");
 
 function sendImage(query, msg, nsfw, providername) {
-    var providername = (providername === undefined) ? Object.keys(availableProvider)[random.randomInt(0, Object.keys(availableProvider).length)] : providername;
+    var providername = (providername === undefined || availableProvider[providername] === undefined)
+     ? Object.keys(availableProvider)[random.randomInt(0, Object.keys(availableProvider).length)] : providername;
     var provider = availableProvider[providername];
     console.log("using: " + provider["name"]);
     var msgId = msg.message_id;
