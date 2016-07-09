@@ -31,43 +31,44 @@ var Google = function (keys, config) {
         });
     }
 
-    Google.prototype.getImageData = function (query, nsfw, cb) {
-        var ok = false;
+    Google.prototype.getImageData = function (query, nsfw, success, error) {
         if (typeof nsfw === "function") {
-            cb = nsfw;
+            error = success;
+            success = nsfw;
             nsfw = undefined;
         }
-        _search.queryApi(query, nsfw, function (result) {
-          var ok = false;
-            if (!result) {
-                result = {
-                    "status": Error.unknown_error
-                };
-            } else if (result["status"] === Error.no_error) {
-                var data = result["data"];
-                if (data && data["items"]) {
-                    var items = data["items"];
-                    if (typeof items === "object" && Array.isArray(items)) {
-                        var max = Math.min(_config["count"], items.length);
-                        var image = items[random.randomInt(0, max)];
-                        ok = true;
-                        cb({
-                            status: 0,
-                            image: {
-                                contentUrl: image["link"],
-                                name: image["title"]
-                            }
-                        });
-                    }
+
+
+        var onSuccess = function(result){
+            var data = result["data"];
+            if (data && data["items"]) {
+                var items = data["items"];
+                if (typeof items === "object" && Array.isArray(items)) {
+                    var max = Math.min(_config["count"], items.length);
+                    var image = items[random.randomInt(0, max)];
+
+                    success({
+                        contentUrl: image["link"],
+                        name: image["title"]
+                    });
+                    return;
                 }
             }
-            if (!ok) {
-                cb({
-                    status: 1,
-                    message: Error.message(result["status"])
-                });
-            }
-        });
+
+            error({
+                status: 1,
+                message: Error.message(Error.unknown_error)
+            });
+        };
+
+        var onError = function(err){
+            error({
+                status: 1,
+                message: Error.message(err["status"])
+            });
+        };
+
+        _search.queryApi(query, nsfw, onSuccess, onError);
     };
 
     return new Google(keys, config);

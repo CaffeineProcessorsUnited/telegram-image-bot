@@ -17,6 +17,8 @@ var gm = require('gm').subClass({imageMagick: true});
 var temp = require('temp').track();
 var fs = require('fs');
 
+var resolution = config.get("bot","resolution");
+
 var random = require('./random');
 var availableProvider = [
     {
@@ -57,35 +59,40 @@ function sendImage(query, msg, nsfw, provider) {
     console.log("using: " + provider["name"]);
     var msgId = msg.message_id;
     var chatId = msg.chat.id;
-    var resultfunc = function (result) {
-        switch (result.status) {
-            case 0:
-                var image = result["image"];
-                var path = image["contentUrl"];
-                var caption = image["name"];
-                var tmpout = temp.createWriteStream({suffix: ".png"});
-                gm(request(path)).stream('png').on('data', function(data) {
-                  tmpout.write(data);
-                }).on('end', function() {
-                  bot.sendPhoto(chatId, tmpout.path, {
-                    reply_to_message_id: msgId,
-                    caption: caption
-                  }).then(function() {
-                    tmpout.end();
-                    temp.cleanupSync();
-                  });
-                });
-                break;
-            default:
-                var message = result.message || "Unknown error!";
-                bot.sendMessage(chatId, message, {
-                    reply_to_message_id: msgId
-                });
-                break;
+
+    var onSuccess = function(result){
+        var path = result["contentUrl"];
+        var caption = result["name"];
+        var tmpout = temp.createWriteStream({suffix: ".png"});
+
+        var gms = gm(request(path));
+        console.log(resolution);
+        if(resolution){
+            gms = gms.resize(resolution[0],resolution[1]);
         }
+
+        gms.stream('png').on('data', function(data) {
+            tmpout.write(data);
+        }).on('end', function() {
+            bot.sendPhoto(chatId, tmpout.path, {
+                reply_to_message_id: msgId,
+                caption: caption
+            }).then(function() {
+                tmpout.end();
+                temp.cleanupSync();
+            });
+        });
     };
+
+    var onError = function(result){
+        var message = result.message || "Unknown error!";
+        bot.sendMessage(chatId, message, {
+            reply_to_message_id: msgId
+        });
+    };
+
     if (provider["class"]) {
-        provider["class"].getImageData(query, nsfw, resultfunc);
+        provider["class"].getImageData(query, nsfw, onSuccess, onError);
     } else {
         bot.sendMessage(chatId, "Can't search for images with provider\n```\n" + JSON.stringify(provider) + "\n```", {
             reply_to_message_id: msgId
@@ -142,3 +149,7 @@ if (config.get("bot", "nsfw")) {
         onCommand("nsfw", match[1], msg);
     });
 }
+
+bot.on('inline_query',function (a,b,c,d) {
+    console.log(a,b,c,d);
+});

@@ -88,10 +88,16 @@ var Keys = function(keys){
             });
         };
 
+        var onTerminate = function(status){
+            error({
+                "status":status
+            });
+        };
+
         if(key === undefined){
             onFinalError()
         } else {
-            onUse(key, onSuccess, onError);
+            onUse(key, onSuccess, onError,onTerminate);
         }
     };
 

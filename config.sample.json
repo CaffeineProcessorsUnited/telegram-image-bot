@@ -12,7 +12,8 @@
     }
   },
   "bot": {
-    "nsfw": true
+    "nsfw": true,
+    "resolution": [800, 600]
   },
   "google": {
     "keys": [
