@@ -47,6 +47,7 @@ var Errors = function(){
     addError("infinite_loop_detected", "Loop-Loop-Loop");
     addError("malformed_response", "The bot couldn't parse the API servers response.");
     addError("no_results", "I couldn't find any images for you :(");
+    addError("empty_response", "The search API acted strange...");
 
     return error;
 };

@@ -65,7 +65,7 @@ var Google = function (keys, config) {
 
             error({
                 status: 1,
-                message: Error.message(Error.unknown_error)
+                message: Error.message(Error.empty_response)
             });
         };
 
