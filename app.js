@@ -54,6 +54,11 @@ Upper.prototype._transform = function (chunk, enc, cb) {
   cb();
 };
 
+String.prototype.replaceAll = function(search, replacement) {
+    var target = this;
+    return target.replace(new RegExp(search, 'g'), replacement);
+};
+
 function sendImage(query, msg, nsfw, provider) {
     var provider = (provider === undefined) ? availableProvider[random.randomInt(0, availableProvider.length)] : provider;
     console.log("using: " + provider["name"]);
@@ -112,15 +117,15 @@ function onCommand(command, query, msg, provider) {
 }
 
 function _1337(str) {
-    return str.replace("i","1").replace("I","1")
-        .replace("z","2").replace("Z","2")
-        .replace("e","3").replace("E","3")
-        .replace("a","4").replace("A","4")
-        .replace("s","5").replace("S","5")
-        .replace("g","6").replace("G","6")
-        .replace("t","7").replace("T","7").replace("l","7").replace("L","7")
-        .replace("b","8").replace("B","8")
-        .replace("o","0").replace("O","0");
+    return str.replaceAll("i","1").replaceAll("I","1")
+        .replaceAll("z","2").replaceAll("Z","2")
+        .replaceAll("e","3").replaceAll("E","3")
+        .replaceAll("a","4").replaceAll("A","4")
+        .replaceAll("s","5").replaceAll("S","5")
+        .replaceAll("g","6").replaceAll("G","6")
+        .replaceAll("t","7").replaceAll("T","7")//.replaceAll("l","7").replaceAll("L","7")
+        .replaceAll("b","8").replaceAll("B","8")
+        .replaceAll("o","0").replaceAll("O","0");
 }
 
 // Matches /image [whatever]
