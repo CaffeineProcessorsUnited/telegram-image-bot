@@ -29,6 +29,13 @@ if (config.get("google", "keys") && config.get("google", "keys").length > 0) {
   };
 }
 
+if (Object.keys(availableProvider).length == 0) {
+  console.error("The bot couldn't load any search provider and thus will not work! Have a look at README.md on how to correctly setup search providers.");
+  process.exit(1);
+}
+
+console.log("Bot is running with " + Object.keys(availableProvider).length + " available search providers.");
+
 var gm = require('gm').subClass({imageMagick: true});
 var temp = require('temp').track();
 var fs = require('fs');
