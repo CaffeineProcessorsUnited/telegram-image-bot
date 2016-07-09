@@ -46,6 +46,7 @@ var Errors = function(){
     addError("invalid_key", "The key is invalid.");
     addError("infinite_loop_detected", "Loop-Loop-Loop");
     addError("malformed_response", "The bot couldn't parse the API servers response.");
+    addError("empty_response", "I did not receive any images.");
 
     return error;
 };
