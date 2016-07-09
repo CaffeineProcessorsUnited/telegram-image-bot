@@ -29,6 +29,12 @@ if (config.get("google", "keys") && config.get("google", "keys").length > 0) {
   };
 }
 
+var pr0 = require('./pr0gramm.js')(config.get("pr0gramm","config"));
+availableProvider["pr0gramm"] =  {
+    name: "Pr0gramm",
+    class: pr0
+};
+
 if (Object.keys(availableProvider).length == 0) {
   console.error("The bot couldn't load any search provider and thus will not work! Have a look at README.md on how to correctly setup search providers.");
   process.exit(1);
@@ -120,6 +126,9 @@ bot.onText(/\/google (.+)/, function (msg, match) {
 });
 bot.onText(/\/bing (.+)/, function (msg, match) {
     onCommand("image", match[1], msg, "bing");
+});
+bot.onText(/\/pr0 (.+)/, function (msg, match) {
+    onCommand("image", match[1], msg, "pr0gramm");
 });
 bot.onText(/\/wow (.+)/, function (msg, match) {
     onCommand("image", "wow such "+match[1], msg);

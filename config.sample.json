@@ -24,6 +24,12 @@
       "engine" : "GOOGLE CUSTOM SEARCH IDENTIFIER"
     }
   },
+  "pr0gramm" : {
+    "config": {
+      "count": 200,
+      "engine" : "PR0GRAMM PUBLIC API"
+    }
+  },
   "updater": {
     "port": 8888,
     "secret": "secret"
