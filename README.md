@@ -44,14 +44,14 @@ Get yourself a API key at [Bing Image Search API](https://www.microsoft.com/cogn
 
 #### Optional configuration
 
-- `count` - Specifies from hwo many results the bot chooses a random image (default: `1000`)
+- `count` - Specifies from how many results the bot chooses a random image (default: `1000`)
 - `market` - Choose the market where the results come from (default: `en-en`)
 
 
 <a name="configuration_bing"></a>
 ### Bot configuration
 
-In the bot section of the configuration file u may specify if the bot serves nsfw content or not.
+In the bot section of the configuration file you may specify if the bot serves nsfw content or not.
 
 
 ## Running
