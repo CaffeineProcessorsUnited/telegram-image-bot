@@ -90,7 +90,7 @@ function sendImage(query, msg, nsfw, providername) {
     var msgId = msg.message_id;
     var chatId = msg.chat.id;
     if (provider === undefined) {
-      sendMessage(chatId, "There are no search providers available!", {
+      bot.sendMessage(chatId, "There are no search providers available!", {
           reply_to_message_id: msgId
       });
     }
@@ -116,7 +116,7 @@ function sendImage(query, msg, nsfw, providername) {
 
     var onError = function(result){
         var message = result.message || "Unknown error!";
-        sendMessage(chatId, message, {
+        bot.sendMessage(chatId, message, {
             reply_to_message_id: msgId
         });
     };
@@ -124,7 +124,7 @@ function sendImage(query, msg, nsfw, providername) {
     if (provider["class"]) {
         provider["class"].getImageData(query, nsfw, onSuccess, onError);
     } else {
-        sendMessage(chatId, "Can't search for images with provider\n```\n" + JSON.stringify(provider) + "\n```", {
+        bot.sendMessage(chatId, "Can't search for images with provider\n```\n" + JSON.stringify(provider) + "\n```", {
             reply_to_message_id: msgId
         });
     }
